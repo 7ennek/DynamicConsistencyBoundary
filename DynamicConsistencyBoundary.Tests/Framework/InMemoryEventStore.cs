@@ -1,3 +1,5 @@
+using DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application;
+
 namespace DynamicConsistencyBoundary.Tests.Framework;
 
 public class InMemoryEventStore
@@ -8,8 +10,8 @@ public class InMemoryEventStore
     
     public void Append(EventType eventType, object eventData) => Append(eventType, eventData, []);
     public void Append(EventType eventType, object eventData, long? lastKnownPosition) => Append(eventType, eventData, [], lastKnownPosition);
-    public void Append(EventType eventType, object eventData, DomainIdentifier[] identifiers) => Append(eventType, eventData, identifiers, null);
-    
+    public void Append(EventType eventType, object eventData, DomainIdentifier[] identifiers) => Append(eventType, eventData, identifiers, (long?) null);
+    public void Append(EventType eventType, object eventData, DomainIdentifier[] identifiers, ISpecification<DomainEvent> query) => Append(eventType, eventData, identifiers, -1, query);
     public void Append(
         EventType eventType,
         object eventData,
@@ -64,5 +66,11 @@ public class InMemoryEventStore
             var result = _events.Where(specification.IsSatisfiedBy).ToArray();
             return (result, result.LastOrDefault()?.Position ?? -1);
         }
+    }
+
+    public (TState State,ISpecification<DomainEvent> Condition)  Project<TState>(IProjection<TState> projection)
+    {
+        var (events, _) = Query(projection.On());
+        return projection.Apply(events.ToArray());
     }
 }

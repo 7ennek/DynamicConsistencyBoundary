@@ -6,6 +6,9 @@ public static partial class Some
 {
     public static Guid Guid => Guid.NewGuid();
     public static string String => Some.Guid.ToString();
+    public static int Integer => Random.Next(250);
+    
+    private static readonly Random Random = new ();
 }
 
 public static partial class Some
