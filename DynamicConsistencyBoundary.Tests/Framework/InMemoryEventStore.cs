@@ -68,9 +68,10 @@ public class InMemoryEventStore
         }
     }
 
-    public (TState State,ISpecification<DomainEvent> Condition)  Project<TState>(IProjection<TState> projection)
+    public (TState State, ICondition Condition)  Project<TState, TCondition>(IProjection<TState, TCondition> projection)
+        where TCondition : ICondition
     {
-        var (events, _) = Query(projection.On());
+        var (events, _) = Query(projection.Condition.On);
         return projection.Apply(events.ToArray());
     }
 }

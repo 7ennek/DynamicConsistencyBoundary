@@ -52,7 +52,7 @@ public class CourseTests
             EventType.For(nameof(CourseDefined)),
             newCourse,
             [DomainIdentifier.For(newCourse.CourseId, "Course")],
-            CourseExistsProjection.For(newCourse.CourseId).On() //TODO make prettier
+            CourseExistsCondition.For(someCourseId).On
         );
     }
 }
