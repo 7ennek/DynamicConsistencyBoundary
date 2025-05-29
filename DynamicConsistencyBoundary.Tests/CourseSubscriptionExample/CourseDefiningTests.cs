@@ -5,7 +5,7 @@ using Shouldly;
 
 namespace DynamicConsistencyBoundary.Tests.CourseSubscriptionExample;
 
-public class CourseTests
+public class CourseDefiningTests
 {
     private readonly InMemoryEventStore _eventStore = new();
     
@@ -49,10 +49,9 @@ public class CourseTests
     {
         var newCourse = new CourseDefined(someCourseId, Some.Integer);
         _eventStore.Append(
-            EventType.For(nameof(CourseDefined)),
             newCourse,
             [DomainIdentifier.For(newCourse.CourseId, "Course")],
-            CourseExistsCondition.For(someCourseId).On
+            CourseExistsCondition.For(someCourseId)
         );
     }
 }

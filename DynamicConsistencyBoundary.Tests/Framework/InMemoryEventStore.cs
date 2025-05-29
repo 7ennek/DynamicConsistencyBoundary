@@ -8,42 +8,59 @@ public class InMemoryEventStore
     private readonly List<DomainEvent> _events = [];
     private readonly Lock _lock = new ();
     
-    public void Append(EventType eventType, object eventData) => Append(eventType, eventData, []);
-    public void Append(EventType eventType, object eventData, long? lastKnownPosition) => Append(eventType, eventData, [], lastKnownPosition);
-    public void Append(EventType eventType, object eventData, DomainIdentifier[] identifiers) => Append(eventType, eventData, identifiers, (long?) null);
-    public void Append(EventType eventType, object eventData, DomainIdentifier[] identifiers, ISpecification<DomainEvent> query) => Append(eventType, eventData, identifiers, -1, query);
-    public void Append(
-        EventType eventType,
-        object eventData,
+    public void Append<TEvent>(TEvent eventData) where TEvent : class
+        => Append(eventData, []);
+    
+    public void Append<TEvent>(TEvent eventData, long lastKnownPosition) where TEvent : class
+        => Append(eventData,[], lastKnownPosition);
+    
+    public void Append<TEvent>(TEvent eventData, DomainIdentifier[] identifiers) where TEvent : class
+        => Append(eventData, identifiers, (long?) null);
+    
+    public void Append<TEvent>(TEvent eventData, DomainIdentifier[] identifiers, ICondition condition) where TEvent : class
+        => Append(eventData, identifiers, -1, condition);
+    
+    public void Append<TEvent>(
+        TEvent eventData,
+        DomainIdentifier[] identifiers,
+        long lastKnownPosition, 
+        ICondition condition
+    ) where  TEvent : class
+        => Append(eventData, identifiers, lastKnownPosition, condition.On);
+    
+    public void Append<TEvent>(
+        TEvent eventData,
         DomainIdentifier[] identifiers,
         long lastKnownPosition, 
         ISpecification<DomainEvent> query
-    )
+    ) where  TEvent : class
     {
         lock (_lock)
         {
             var (_, lastFoundPosition) = Query(query);
             if (lastKnownPosition != lastFoundPosition)
                 throw new InvalidOperationException($"unexpected position: {lastKnownPosition}");
-            AppendEventToStore(eventType, eventData, identifiers);
+            AppendEventToStore(eventData, identifiers);
         }
     }
     
-    private void Append(EventType eventType, object eventData, DomainIdentifier[] identifiers, long? lastKnownPosition)
+    private void Append<TEvent>(TEvent eventData, DomainIdentifier[] identifiers, long? lastKnownPosition)
+        where TEvent : class
     {
         lock (_lock)
         {
             if (lastKnownPosition is not null && lastKnownPosition.Value != _position - 1)
                 throw new InvalidOperationException($"unexpected position: {lastKnownPosition}");
 
-            AppendEventToStore(eventType, eventData, identifiers);
+            AppendEventToStore(eventData, identifiers);
         }
     }
     
-    private void AppendEventToStore(EventType eventType, object eventData, DomainIdentifier[] identifiers)
+    private void AppendEventToStore<TEvent>(TEvent eventData, DomainIdentifier[] identifiers)
+        where TEvent : class
     {
         _events.Add(DomainEvent.Define(
-            eventType,
+            EventType.For(typeof(TEvent).Name),
             _position,
             eventData,
             identifiers));

@@ -39,6 +39,7 @@ public class DomainIdentifierSpecification(DomainIdentifier identifier) : ISpeci
 {
     public bool IsSatisfiedBy(DomainEvent item) => item.Identifiers.Contains(identifier);
 
+    public static DomainIdentifierSpecification For(Guid id, string concept) => For(DomainIdentifier.For(id, concept));
     public static DomainIdentifierSpecification For(DomainIdentifier identifier) => new(identifier);
     
     public static AndSpecification<DomainEvent> operator &(DomainIdentifierSpecification spec1, ISpecification<DomainEvent> spec2) => new (spec1, spec2);
@@ -71,6 +72,7 @@ public class EventTypeSpecification(EventType eventType) : ISpecification<Domain
 {
     public bool IsSatisfiedBy(DomainEvent item) => item.Type == eventType;
     public static EventTypeSpecification For(EventType eventType) => new(eventType);
+    public static EventTypeSpecification For<T>() => new(EventType.For(typeof(T).Name));
     
     public static AndSpecification<DomainEvent> operator &(EventTypeSpecification spec1, ISpecification<DomainEvent> spec2) => new (spec1, spec2);
     public static OrSpecification<DomainEvent> operator |(EventTypeSpecification spec1, ISpecification<DomainEvent> spec2) => new (spec1, spec2);
