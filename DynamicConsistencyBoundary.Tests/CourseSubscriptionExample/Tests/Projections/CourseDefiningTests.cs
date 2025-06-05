@@ -1,9 +1,10 @@
 ﻿using DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application;
+using DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application.Projections;
 using DynamicConsistencyBoundary.Tests.Framework;
 using DynamicConsistencyBoundary.Tests.TestHelpers;
 using Shouldly;
 
-namespace DynamicConsistencyBoundary.Tests.CourseSubscriptionExample;
+namespace DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Tests.Projections;
 
 public class CourseDefiningTests
 {

@@ -1,6 +1,6 @@
 ﻿using DynamicConsistencyBoundary.Tests.Framework;
 
-namespace DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application;
+namespace DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application.Projections;
 
 public class CourseExistsCondition(Guid courseId) : ICondition
 {

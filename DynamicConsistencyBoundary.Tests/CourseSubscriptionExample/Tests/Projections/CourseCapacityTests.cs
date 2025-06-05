@@ -1,9 +1,10 @@
 ﻿using DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application;
+using DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application.Projections;
 using DynamicConsistencyBoundary.Tests.Framework;
 using DynamicConsistencyBoundary.Tests.TestHelpers;
 using Shouldly;
 
-namespace DynamicConsistencyBoundary.Tests.CourseSubscriptionExample;
+namespace DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Tests.Projections;
 
 public class CourseCapacityTests
 {
@@ -15,16 +16,13 @@ public class CourseCapacityTests
         var someCourseId = Some.Guid;
         _eventStore.Append(
             new CourseDefined(someCourseId, Some.Integer),
-            [DomainIdentifier.For(someCourseId, "Course")],
-            CourseExistsCondition.For(someCourseId)
+            [DomainIdentifier.For(someCourseId, "Course")]
         );
 
         var updateCapacity = Some.Integer;
         _eventStore.Append(
             new CourseCapacityChanged(someCourseId, updateCapacity),
-            [DomainIdentifier.For(someCourseId, "Course")],
-            0,
-            CourseChangeCapacityCondition.For(someCourseId)
+            [DomainIdentifier.For(someCourseId, "Course")]
         );
         
         var (projectResult, _) = _eventStore.Project(CourseCapacityProjection.For(someCourseId));

@@ -1,4 +1,5 @@
 using DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application;
+using DynamicConsistencyBoundary.Tests.CourseSubscriptionExample.Application.DecisionModels;
 
 namespace DynamicConsistencyBoundary.Tests.Framework;
 
@@ -90,5 +91,12 @@ public class InMemoryEventStore
     {
         var (events, _) = Query(projection.Condition.On);
         return projection.Apply(events.ToArray());
+    }
+
+    public void ApplyWhenSatisfied<TState, TCondition>(IDecision<TState, TCondition> decision)
+        where TCondition : ICondition
+    {
+        // TODO
+        throw new NotImplementedException();
     }
 }

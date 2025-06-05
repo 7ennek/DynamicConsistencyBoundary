@@ -7,7 +7,8 @@ public interface IProjection<TState, TCondition>
     (TState State, TCondition Condition) Apply(DomainEvent[] domainEvents);
 }
 
-public interface ICondition
+public interface IDecision<TState, TCondition> : IProjection<TState, TCondition>
+    where TCondition : ICondition
 {
-    ISpecification<DomainEvent> On { get; }
+    (bool IsSatisfied, object[] ToApply, DomainIdentifier DomainIdentifier) ApplyWhenSatisfiedWith(TState state);
 }

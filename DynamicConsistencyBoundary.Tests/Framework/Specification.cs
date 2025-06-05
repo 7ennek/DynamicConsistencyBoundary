@@ -3,6 +3,10 @@
 public interface ISpecification<in T>  
 {  
     bool IsSatisfiedBy(T item);
+    
+    public static AndSpecification<T> operator &(ISpecification<T> spec1, ISpecification<T> spec2) => new (spec1, spec2);
+    public static OrSpecification<T> operator |(ISpecification<T> spec1, ISpecification<T> spec2) => new (spec1, spec2);
+    public static NotSpecification<T> operator !(ISpecification<T> spec) => new (spec);
 }
 
 public class AndSpecification<T>(ISpecification<T> left, ISpecification<T> right) : ISpecification<T>
